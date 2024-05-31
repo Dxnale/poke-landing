@@ -1,0 +1,61 @@
+#footer {
+    margin: 5em 0
+}
+
+#footer li {
+    float: left;
+    margin-right: 1.5em;
+    margin-bottom: 1.5em
+}
+
+#footer p {
+    margin-bottom: 0;
+    clear: left
+}
+
+.hero {
+    padding-top: 10vh;
+}
+
+.container,
+.container-fluid {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    width: 100%;
+    padding-right: calc(var(--bs-gutter-x)* 0.5);
+    padding-left: calc(var(--bs-gutter-x)* 0.5);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.navbar {
+    background-color: rgba(17, 17, 17, 0.6) !important;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.card-charmander {
+    background-color: rgba(227, 114, 63, 0.6);
+}
+
+.card-bulbasaur {
+    background-color: rgba(128, 128, 128, 0.6);
+}
+
+.card-squirtle {
+    background-color: rgba(63, 128, 227, 0.6);
+}
+
+header {
+    background-image: url("../../img/hero.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: left;
+    padding-bottom: 10rem;
+}
+
+.dropdown-menu {
+    background-color: rgba(17, 17, 17, 0.6) !important;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(10px);
+}
