@@ -277,22 +277,9 @@ class About extends BaseComponent {
 }
 
 class InitialPokemon extends BaseComponent {
-  render() {
-    const section = this._createElement(
-      "section",
-      "container-fluid my-5 p-3 bg-dark"
-    );
-    section.id = "iniciales";
-
-    const title = this._createElement(
-      "h2",
-      "display-3 text-center font-weight-bold my-4 text-white"
-    );
-    title.textContent = "Iniciales";
-
-    const row = this._createElement("div", "row row-cols-1 row-cols-md-3 g-4");
-
-    const pokemons = [
+  constructor() {
+    super();
+    this.pokemons = [
       {
         name: "Charmander",
         image: "assets/img/charmander.png",
@@ -318,12 +305,67 @@ class InitialPokemon extends BaseComponent {
           "Atacar a distancia, Atacar a objetos inanimados, Escupir Agua",
       },
     ];
+  }
 
-    pokemons.forEach((pokemon) => {
+  addPokemon(pokemon) {
+    this.pokemons.push(pokemon);
+    this.renderNewPokemon(pokemon);
+  }
+
+  renderNewPokemon(pokemon) {
+    const row = document.querySelector("#iniciales .row");
+    const col = this._createElement("div", "col");
+    const card = this._createElement(
+      "div",
+      `card pokemon-card card-${pokemon.name.toLowerCase()}`
+    );
+    const img = this._createElement("img", "card-img-top", {
+      src: pokemon.image,
+      alt: pokemon.name,
+    });
+    const cardBody = this._createElement("div", "card-body");
+    const cardTitle = this._createElement("h5", "card-title");
+    cardTitle.textContent = pokemon.name;
+    const cardText = this._createElement("p", "card-text");
+
+    const typeSpan = this._createElement("span", `badge ${pokemon.type.class}`);
+    typeSpan.textContent = pokemon.type.text;
+
+    cardText.innerHTML = `
+      <strong>Tipo:</strong> ${typeSpan.outerHTML}<br>
+      <strong>Color:</strong> ${pokemon.color}<br>
+      <strong>Habilidades:</strong> ${pokemon.abilities}
+    `;
+
+    cardBody.append(cardTitle, cardText);
+    card.append(img, cardBody);
+    col.appendChild(card);
+    row.appendChild(col);
+
+    addCardHoverEffects();
+    addPokemonCardClickEvents();
+  }
+
+  render() {
+    const section = this._createElement(
+      "section",
+      "container-fluid my-5 p-3 bg-dark"
+    );
+    section.id = "iniciales";
+
+    const title = this._createElement(
+      "h2",
+      "display-3 text-center font-weight-bold my-4 text-white"
+    );
+    title.textContent = "Pokemons";
+
+    const row = this._createElement("div", "row row-cols-1 row-cols-md-3 g-4");
+
+    this.pokemons.forEach((pokemon) => {
       const col = this._createElement("div", "col");
       const card = this._createElement(
         "div",
-        `card card-${pokemon.name.toLowerCase()}`
+        `card pokemon-card card-${pokemon.name.toLowerCase()}`
       );
       const img = this._createElement("img", "card-img-top", {
         src: pokemon.image,
@@ -451,6 +493,7 @@ class DOMExporter extends IDOMExporter {
       about: new About(),
       initialPokemon: new InitialPokemon(),
       footer: new Footer(),
+      pokemonForm: new PokemonForm(),
     };
   }
 
@@ -473,16 +516,177 @@ class DOMExporter extends IDOMExporter {
   createFooter() {
     return this.#components.footer.render();
   }
+
+  createPokemonForm() {
+    return this.#components.pokemonForm.render();
+  }
 }
 
-// Instancia del exportador y renderizacion de los componentes
+function addCardHoverEffects() {
+  // Seleccionar todas las tarjetas de Pokémon
+  const pokemonCards = document.querySelectorAll(".pokemon-card");
+
+  pokemonCards.forEach((card) => {
+    card.style.transition = "transform 0.3s ease";
+
+    card.addEventListener("mouseenter", () => {
+      card.style.transform = "scale(1.1)";
+      card.style.zIndex = "1";
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "scale(1)";
+      card.style.zIndex = "0";
+    });
+  });
+}
+
+function addPokemonCardClickEvents() {
+  const cards = document.querySelectorAll(".pokemon-card");
+  pokemons = InitialPokemon.pokemons;
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      // Obtener el nombre del Pokémon desde el título de la tarjeta
+      const pokemonName = card.querySelector("img").getAttribute("alt");
+      console.log(encodeURIComponent(pokemonName));
+
+      const searchQuery = `https://www.google.com/search?q=pokemon+${encodeURI(
+        pokemonName
+      )}`;
+
+      // Abrir en nueva pestaña
+      window.open(searchQuery, "_blank");
+    });
+    card.style.cursor = "pointer";
+  });
+}
+
+// Cmponente para el formulario
+class PokemonForm extends BaseComponent {
+  render() {
+    const section = this._createElement("section", "container my-5");
+    section.id = "nuevo-pokemon";
+
+    const title = this._createElement("h2", "text-center mb-4");
+    title.textContent = "Agregar Nuevo Pokémon";
+
+    const form = this._createElement("form", "needs-validation");
+    form.id = "pokemon-form";
+
+    const fields = [
+      {
+        label: "Nombre del Pokémon",
+        type: "text",
+        id: "pokemon-name",
+        required: true,
+      },
+      {
+        label: "URL de la imagen",
+        type: "url",
+        id: "pokemon-image",
+        required: true,
+      },
+      {
+        label: "Color",
+        type: "text",
+        id: "pokemon-color",
+        required: true,
+      },
+      {
+        label: "Habilidades",
+        type: "text",
+        id: "pokemon-abilities",
+        required: true,
+      },
+    ];
+
+    // Crear campos del formulario
+    fields.forEach((field) => {
+      const formGroup = this._createElement("div", "form-group mb-3");
+
+      const label = this._createElement("label", "form-label");
+      label.htmlFor = field.id;
+      label.textContent = field.label;
+
+      const input = this._createElement("input", "form-control", {
+        type: field.type,
+        id: field.id,
+        required: field.required,
+      });
+
+      formGroup.append(label, input);
+      form.appendChild(formGroup);
+    });
+
+    // Tipo de Pokémon
+    const typeGroup = this._createElement("div", "form-group mb-3");
+    const typeLabel = this._createElement("label", "form-label");
+    typeLabel.textContent = "Tipo de Pokémon";
+
+    const typeSelect = this._createElement("select", "form-select", {
+      id: "pokemon-type",
+    });
+
+    const types = [
+      { text: "Fuego", class: "bg-danger" },
+      { text: "Planta/Veneno", class: "bg-success" },
+      { text: "Agua", class: "bg-info" },
+    ];
+
+    types.forEach((type) => {
+      const option = this._createElement("option");
+      option.value = JSON.stringify(type);
+      option.textContent = type.text;
+      typeSelect.appendChild(option);
+    });
+
+    typeGroup.append(typeLabel, typeSelect);
+    form.appendChild(typeGroup);
+
+    // Botón submit
+    const submitBtn = this._createButton(
+      "btn btn-outline-info w-100 mt-3",
+      "Agregar Pokémon",
+      "submit"
+    );
+
+    form.appendChild(submitBtn);
+    section.append(title, form);
+
+    // Evento submit
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const newPokemon = {
+        name: document.getElementById("pokemon-name").value,
+        image: document.getElementById("pokemon-image").value,
+        type: JSON.parse(document.getElementById("pokemon-type").value),
+        color: document.getElementById("pokemon-color").value,
+        abilities: document.getElementById("pokemon-abilities").value,
+      };
+
+      // Agregar el nuevo Pokémon
+      const initialPokemon = new InitialPokemon();
+      initialPokemon.addPokemon(newPokemon);
+
+      // Limpiar formulario
+      form.reset();
+    });
+
+    return section;
+  }
+}
+
 const domExporter = new DOMExporter();
 const components = [
   domExporter.createNavbar(),
   domExporter.createHero(),
   domExporter.createAboutSection(),
   domExporter.createInitialPokemonSection(),
+  domExporter.createPokemonForm(),
   domExporter.createFooter(),
 ];
 
 components.forEach((component) => document.body.appendChild(component));
+addCardHoverEffects();
+addPokemonCardClickEvents();
