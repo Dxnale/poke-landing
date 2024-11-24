@@ -5,7 +5,7 @@
 [data-bs-theme=light] {
   /*
   Cambiar la paleta de colores por la siguiente linea:
-  
+
   */
   --bs-primary: #b49429;
   --bs-secondary: #62627b;
@@ -186,6 +186,8 @@
 }
 
 body {
+  overflow-x: hidden;
+  width: 100%;
   margin: 0;
   font-family: var(--bs-body-font-family);
   font-size: var(--bs-body-font-size);
@@ -773,11 +775,12 @@ progress {
 .container-sm {
   --bs-gutter-x: 1.5rem;
   --bs-gutter-y: 0;
-  width: 100%;
   padding-right: calc(var(--bs-gutter-x) * 0.5);
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
+  width: 100% !important;
+  max-width: 100%;
 }
 
 @media (min-width: 576px) {
@@ -847,6 +850,9 @@ progress {
   margin-top: calc(-1 * var(--bs-gutter-y));
   margin-right: calc(-0.5 * var(--bs-gutter-x));
   margin-left: calc(-0.5 * var(--bs-gutter-x));
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
 }
 
 .row>* {
@@ -14556,4 +14562,9 @@ body {
 
 .offcanvas .text-muted {
   color: rgba(255, 255, 255, 0.7) !important;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
 }
